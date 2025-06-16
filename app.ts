@@ -58,11 +58,12 @@ function displayValues(params: GpxMiniatureParams) {
   document.documentElement.style.setProperty('--color', params.polylineColor);
 }
 
-function handleInput(e: Event) {
+// Handle continuous input (like dragging sliders) - updates UI immediately but doesn't trigger 3D rendering
+function handleContinuousInput(e: Event) {
   // If someone types into a valueDisplay, update the input
-  if(e.target.classList.contains('value-display')) {
-    const input = e.target.previousElementSibling as HTMLInputElement;
-    input.value = e.target.value;
+  if((e.target as HTMLElement).classList.contains('value-display')) {
+    const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement;
+    input.value = (e.target as HTMLInputElement).value;
   }
   
   // Parse form data and merge with current state to preserve GPX data
@@ -81,14 +82,40 @@ function handleInput(e: Event) {
   
   // Update display values immediately for responsive UI
   displayValues(currentGpxParams);
+}
+
+// Handle final changes (like releasing sliders, checkbox changes) - triggers 3D rendering
+function handleFinalChange(e: Event) {
+  // If someone types into a valueDisplay, update the input
+  if((e.target as HTMLElement).classList.contains('value-display')) {
+    const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement;
+    input.value = (e.target as HTMLInputElement).value;
+  }
+  
+  // Parse form data and merge with current state to preserve GPX data
+  const data = new FormData(controls);
+  const formParams = parseFormData(data);
+  
+  // Explicitly handle the slantedTextPlate checkbox
+  const slantedTextPlateCheckbox = document.getElementById('slantedTextPlate') as HTMLInputElement;
+  formParams.slantedTextPlate = slantedTextPlateCheckbox.checked;
+  
+  // Merge form parameters with current state, preserving GPX data
+  currentGpxParams = {
+    ...currentGpxParams,
+    ...formParams
+  };
+  
+  // Update display values immediately for consistency
+  displayValues(currentGpxParams);
   
   // Use debounced version for expensive 3D rendering
   debouncedUpdateMiniature(currentGpxParams);
 }
 
-// Enable form handling
-controls.addEventListener("input", handleInput);
-controls.addEventListener("change", handleInput); // Also listen for change events (important for checkboxes)
+// Enable form handling with separated event listeners
+controls.addEventListener("input", handleContinuousInput);
+controls.addEventListener("change", handleFinalChange);
 
 // On page load, restore state from defaults
 function restoreState() {
