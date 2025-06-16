@@ -11,6 +11,18 @@ let currentGpxParams: GpxMiniatureParams = { ...defaultParams };
 const canvas = document.getElementById("preview") as HTMLCanvasElement;
 const updateMiniature = setupPreview(canvas);
 
+// Debounce utility function
+function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return ((...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  }) as T;
+}
+
+// Create debounced version of updateMiniature
+const debouncedUpdateMiniature = debounce(updateMiniature, 150);
+
 const controls = document.querySelector<HTMLFormElement>("#controls");
 
 // Get all range inputs
@@ -67,8 +79,11 @@ function handleInput(e: Event) {
     ...formParams
   };
   
+  // Update display values immediately for responsive UI
   displayValues(currentGpxParams);
-  updateMiniature(currentGpxParams);
+  
+  // Use debounced version for expensive 3D rendering
+  debouncedUpdateMiniature(currentGpxParams);
 }
 
 // Enable form handling
@@ -88,7 +103,7 @@ function restoreState() {
       }
     }
   }
-  // Update display values and miniature directly
+  // Update display values and miniature directly (no debouncing on initial load)
   displayValues(currentGpxParams);
   updateMiniature(currentGpxParams);
 }
@@ -159,6 +174,7 @@ gpxFileInput.addEventListener('change', async (e) => {
     };
   }
 
+  // Use non-debounced version for immediate feedback on file import
   updateMiniature(currentGpxParams);
 });
 
