@@ -13,6 +13,10 @@ interface WorkerResponse {
   params: GpxMiniatureParams;
 }
 
+// LIFO pattern variables
+let latestData: GpxMiniatureParams | null = null;
+let isProcessing = false;
+
 function manifoldToMeshData(manifold: any): MeshData {
   if (manifold.isEmpty()) {
     return {
@@ -30,12 +34,18 @@ function manifoldToMeshData(manifold: any): MeshData {
   };
 }
 
-self.addEventListener('message', async (event) => {
+async function processNext() {
+  if (latestData === null) {
+    return; // No new data to process
+  }
+
+  isProcessing = true;
+  const dataToProcess = latestData;
+  latestData = null; // Clear the latest data to indicate it's being processed
+
   try {
-    const params: GpxMiniatureParams = event.data;
-    
     // Generate the model components
-    const components = await createGpxMiniatureComponents(params);
+    const components = await createGpxMiniatureComponents(dataToProcess);
     
     // Convert each component to mesh data
     const baseMesh = manifoldToMeshData(components.base);
@@ -46,7 +56,7 @@ self.addEventListener('message', async (event) => {
       baseMesh,
       polylineMesh,
       textMesh,
-      params
+      params: dataToProcess
     };
     
     // Transfer the ArrayBuffers for performance
@@ -64,5 +74,22 @@ self.addEventListener('message', async (event) => {
     console.error('Error in model worker:', error);
     // Send an error response
     self.postMessage({ error: error.message });
+  }
+
+  isProcessing = false;
+
+  // After processing, immediately check if new data has arrived
+  // and start the next task if so.
+  if (latestData !== null) {
+    processNext();
+  }
+}
+
+self.addEventListener('message', async (event) => {
+  const params: GpxMiniatureParams = event.data;
+  latestData = params;
+  
+  if (!isProcessing) {
+    processNext();
   }
 });
