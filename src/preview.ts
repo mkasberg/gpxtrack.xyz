@@ -42,15 +42,23 @@ function meshDataToThreeMesh(
   material: MeshStandardMaterial, 
   params: GpxMiniatureParams
 ): ThreeMesh | null {
+  console.time('meshDataToThreeMesh duration');
+  
   if (meshData.isEmpty || meshData.vertProperties.length === 0) {
+    console.timeEnd('meshDataToThreeMesh duration');
     return null;
   }
+
+  console.log('Creating BufferGeometry with', meshData.vertProperties.length / 3, 'vertices and', meshData.triVerts.length / 3, 'triangles');
 
   // Create Three.js geometry
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new BufferAttribute(meshData.vertProperties, 3));
   geometry.setIndex(new BufferAttribute(meshData.triVerts, 1));
+  
+  console.time('computeVertexNormals duration');
   geometry.computeVertexNormals();
+  console.timeEnd('computeVertexNormals duration');
 
   // Create mesh with shadows enabled
   const mesh = new ThreeMesh(geometry, material);
@@ -65,6 +73,7 @@ function meshDataToThreeMesh(
   mesh.position.z = (params.width + params.plateDepth) / 2;
   mesh.position.x = -params.width / 2;
 
+  console.timeEnd('meshDataToThreeMesh duration');
   return mesh;
 }
 
@@ -140,7 +149,12 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
 
   // Function to center and fit the object in view
   function centerAndFitObject() {
-    if (!baseMesh && !polylineMesh && !textMesh) return;
+    console.time('centerAndFitObject duration');
+    
+    if (!baseMesh && !polylineMesh && !textMesh) {
+      console.timeEnd('centerAndFitObject duration');
+      return;
+    }
 
     const box = new THREE.Box3();
     if (baseMesh) box.expandByObject(baseMesh);
@@ -163,11 +177,17 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     // Reset controls target
     controls.target.copy(center);
     controls.update();
+    
+    console.timeEnd('centerAndFitObject duration');
   }
 
   function updateMiniature(data: WorkerMeshData) {
+    console.time('updateMiniature total duration');
+    console.log('Starting updateMiniature at', performance.now());
+    
     const { baseMesh: baseMeshData, polylineMesh: polylineMeshData, textMesh: textMeshData, params } = data;
     
+    console.time('Remove old meshes');
     // Remove old meshes if they exist
     if (baseMesh) {
       scene.remove(baseMesh);
@@ -184,11 +204,15 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
       textMesh.geometry.dispose();
       textMesh = null;
     }
+    console.timeEnd('Remove old meshes');
 
+    console.time('Update material colors');
     // Update material colors
     baseMaterial.color.set(params.baseColor);
     polylineMaterial.color.set(params.polylineColor);
+    console.timeEnd('Update material colors');
 
+    console.time('Create new meshes');
     // Convert mesh data to Three.js meshes using the helper function
     baseMesh = meshDataToThreeMesh(baseMeshData, baseMaterial, params);
     if (baseMesh) {
@@ -205,8 +229,12 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     if (textMesh) {
       scene.add(textMesh);
     }
+    console.timeEnd('Create new meshes');
 
     centerAndFitObject();
+    
+    console.log('Finished updateMiniature at', performance.now());
+    console.timeEnd('updateMiniature total duration');
   }
 
   // Add orbit controls with better settings

@@ -16,15 +16,22 @@ const worker = new Worker(new URL('./model-worker.ts', import.meta.url), { type:
 
 // Handle messages from the worker
 worker.onmessage = (event) => {
+  console.log('Worker response received at', performance.now());
+  console.time('Worker onmessage processing');
+  
   const { baseMesh, polylineMesh, textMesh, params, error } = event.data;
   
   if (error) {
     console.error('Worker error:', error);
+    console.timeEnd('Worker onmessage processing');
     return;
   }
   
+  console.log('Calling updateMiniature from worker.onmessage');
   // Update the preview with the generated mesh data
   updateMiniature({ baseMesh, polylineMesh, textMesh, params });
+  
+  console.timeEnd('Worker onmessage processing');
 };
 
 const controls = document.querySelector<HTMLFormElement>("#controls");
@@ -51,6 +58,8 @@ function parseFormData(data: FormData) {
 
 
 function displayValues(params: GpxMiniatureParams) {
+  console.time('displayValues duration');
+  
   for(const input of inputs) {
     const label = input.nextElementSibling as HTMLInputElement;
     const unit = input.getAttribute("data-unit") ?? 'mm';
@@ -60,9 +69,14 @@ function displayValues(params: GpxMiniatureParams) {
   }
   // Also pop the polyline color on the root so we can use in css for site accent color
   document.documentElement.style.setProperty('--color', params.polylineColor);
+  
+  console.timeEnd('displayValues duration');
 }
 
 function handleInput(e: Event) {
+  console.time('handleInput duration');
+  console.log('handleInput started at', performance.now());
+  
   // If someone types into a valueDisplay, update the input
   if(e.target.classList.contains('value-display')) {
     const input = e.target.previousElementSibling as HTMLInputElement;
@@ -85,8 +99,12 @@ function handleInput(e: Event) {
   
   displayValues(currentGpxParams);
   
+  console.log('Sending params to worker at', performance.now());
   // Send parameters to worker instead of calling updateMiniature directly
   worker.postMessage(currentGpxParams);
+  
+  console.log('handleInput finished at', performance.now());
+  console.timeEnd('handleInput duration');
 }
 
 // Enable form handling
