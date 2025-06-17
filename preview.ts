@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper } from 'three';
-import { createGpxMiniatureComponents, defaultParams } from './gpx-miniature.js';
-import { Manifold } from './manifold-instance.js';
+import { defaultParams } from './gpx-miniature.js';
 
 interface GpxMiniatureParams {
   title: string;
@@ -22,32 +21,44 @@ interface GpxMiniatureParams {
   slantedTextPlate: boolean;
 }
 
-interface GpxMiniatureComponents {
-  base: Manifold;
-  polyline: Manifold;
-  text: Manifold;
+interface MeshData {
+  vertProperties: Float32Array;
+  triVerts: Uint32Array;
+  isEmpty: boolean;
+}
+
+interface WorkerMeshData {
+  baseMesh: MeshData;
+  polylineMesh: MeshData;
+  textMesh: MeshData;
+  params: GpxMiniatureParams;
 }
 
 /**
- * Converts a Manifold object to a Three.js mesh with common transformations applied
+ * Converts mesh data to a Three.js mesh with common transformations applied
  */
-function manifoldToThreeMesh(
-  manifold: Manifold, 
+function meshDataToThreeMesh(
+  meshData: MeshData, 
   material: MeshStandardMaterial, 
   params: GpxMiniatureParams
 ): ThreeMesh | null {
-  if (manifold.isEmpty()) {
+  console.time('meshDataToThreeMesh duration');
+  
+  if (meshData.isEmpty || meshData.vertProperties.length === 0) {
+    console.timeEnd('meshDataToThreeMesh duration');
     return null;
   }
 
-  // Get mesh data from manifold
-  const meshData = manifold.getMesh();
-  
+  console.log('Creating BufferGeometry with', meshData.vertProperties.length / 3, 'vertices and', meshData.triVerts.length / 3, 'triangles');
+
   // Create Three.js geometry
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new BufferAttribute(meshData.vertProperties, 3));
   geometry.setIndex(new BufferAttribute(meshData.triVerts, 1));
+  
+  console.time('computeVertexNormals duration');
   geometry.computeVertexNormals();
+  console.timeEnd('computeVertexNormals duration');
 
   // Create mesh with shadows enabled
   const mesh = new ThreeMesh(geometry, material);
@@ -62,6 +73,7 @@ function manifoldToThreeMesh(
   mesh.position.z = (params.width + params.plateDepth) / 2;
   mesh.position.x = -params.width / 2;
 
+  console.timeEnd('meshDataToThreeMesh duration');
   return mesh;
 }
 
@@ -137,7 +149,12 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
 
   // Function to center and fit the object in view
   function centerAndFitObject() {
-    if (!baseMesh && !polylineMesh && !textMesh) return;
+    console.time('centerAndFitObject duration');
+    
+    if (!baseMesh && !polylineMesh && !textMesh) {
+      console.timeEnd('centerAndFitObject duration');
+      return;
+    }
 
     const box = new THREE.Box3();
     if (baseMesh) box.expandByObject(baseMesh);
@@ -160,9 +177,17 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     // Reset controls target
     controls.target.copy(center);
     controls.update();
+    
+    console.timeEnd('centerAndFitObject duration');
   }
 
-  async function updateMiniature(params: GpxMiniatureParams) {
+  function updateMiniature(data: WorkerMeshData) {
+    console.time('updateMiniature total duration');
+    console.log('Starting updateMiniature at', performance.now());
+    
+    const { baseMesh: baseMeshData, polylineMesh: polylineMeshData, textMesh: textMeshData, params } = data;
+    
+    console.time('Remove old meshes');
     // Remove old meshes if they exist
     if (baseMesh) {
       scene.remove(baseMesh);
@@ -179,32 +204,37 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
       textMesh.geometry.dispose();
       textMesh = null;
     }
+    console.timeEnd('Remove old meshes');
 
+    console.time('Update material colors');
     // Update material colors
     baseMaterial.color.set(params.baseColor);
     polylineMaterial.color.set(params.polylineColor);
+    console.timeEnd('Update material colors');
 
-    // Create new miniature components
-    const components = await createGpxMiniatureComponents(params);
-
-    // Convert components to Three.js meshes using the helper function
-    baseMesh = manifoldToThreeMesh(components.base, baseMaterial, params);
+    console.time('Create new meshes');
+    // Convert mesh data to Three.js meshes using the helper function
+    baseMesh = meshDataToThreeMesh(baseMeshData, baseMaterial, params);
     if (baseMesh) {
       scene.add(baseMesh);
     }
 
-    polylineMesh = manifoldToThreeMesh(components.polyline, polylineMaterial, params);
+    polylineMesh = meshDataToThreeMesh(polylineMeshData, polylineMaterial, params);
     if (polylineMesh) {
       scene.add(polylineMesh);
     }
 
     // Use polyline material for text to maintain the same color
-    textMesh = manifoldToThreeMesh(components.text, polylineMaterial, params);
+    textMesh = meshDataToThreeMesh(textMeshData, polylineMaterial, params);
     if (textMesh) {
       scene.add(textMesh);
     }
+    console.timeEnd('Create new meshes');
 
     centerAndFitObject();
+    
+    console.log('Finished updateMiniature at', performance.now());
+    console.timeEnd('updateMiniature total duration');
   }
 
   // Add orbit controls with better settings
