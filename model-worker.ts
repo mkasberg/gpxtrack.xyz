@@ -39,7 +39,6 @@ async function processNext() {
     return; // No new data to process
   }
 
-  isProcessing = true;
   const dataToProcess = latestData;
   latestData = null; // Clear the latest data to indicate it's being processed
 
@@ -89,7 +88,8 @@ async function processNext() {
   // and start the next task if so.
   if (latestData !== null) {
     console.log(`[WORKER] New data available, starting next task immediately - title: "${latestData.title}", width: ${latestData.width}`);
-    processNext();
+    isProcessing = true;
+    setTimeout(processNext, 0);
   } else {
     console.log(`[WORKER] No new data, worker idle at ${performance.now().toFixed(2)}ms`);
   }
@@ -102,6 +102,12 @@ self.addEventListener('message', async (event) => {
   console.log(`[WORKER] Message received at ${performance.now().toFixed(2)}ms - title: "${params.title}", width: ${params.width}, isProcessing: ${isProcessing}`);
   
   if (!isProcessing) {
-    processNext();
+    // Set the flag immediately to prevent scheduling multiple processing calls.
+    isProcessing = true;
+
+    // Schedule the processing to start on the next event loop tick.
+    // This allows this onmessage handler to return right away,
+    // letting other pending messages in the queue be processed.
+    setTimeout(processNext, 0);
   }
 });
