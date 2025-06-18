@@ -42,13 +42,9 @@ async function processNext() {
   const dataToProcess = latestData;
   latestData = null; // Clear the latest data to indicate it's being processed
 
-  console.log(`[WORKER] Processing started at ${performance.now().toFixed(2)}ms - title: "${dataToProcess.title}", width: ${dataToProcess.width}`);
-
   try {
-    console.log(`[WORKER] Starting createGpxMiniatureComponents at ${performance.now().toFixed(2)}ms`);
     // Generate the model components
     const components = await createGpxMiniatureComponents(dataToProcess);
-    console.log(`[WORKER] Finished createGpxMiniatureComponents at ${performance.now().toFixed(2)}ms`);
     
     // Convert each component to mesh data
     const baseMesh = manifoldToMeshData(components.base);
@@ -61,8 +57,6 @@ async function processNext() {
       textMesh,
       params: dataToProcess
     };
-    
-    console.log(`[WORKER] Sending response at ${performance.now().toFixed(2)}ms - title: "${dataToProcess.title}", width: ${dataToProcess.width}`);
     
     // Transfer the ArrayBuffers for performance
     const transferables = [
@@ -82,24 +76,18 @@ async function processNext() {
   }
 
   isProcessing = false;
-  console.log(`[WORKER] Processing finished at ${performance.now().toFixed(2)}ms - title: "${dataToProcess.title}", width: ${dataToProcess.width}`);
 
   // After processing, immediately check if new data has arrived
   // and start the next task if so.
   if (latestData !== null) {
-    console.log(`[WORKER] New data available, starting next task immediately - title: "${latestData.title}", width: ${latestData.width}`);
     isProcessing = true;
     setTimeout(processNext, 0);
-  } else {
-    console.log(`[WORKER] No new data, worker idle at ${performance.now().toFixed(2)}ms`);
   }
 }
 
 self.addEventListener('message', async (event) => {
   const params: GpxMiniatureParams = event.data;
   latestData = params;
-  
-  console.log(`[WORKER] Message received at ${performance.now().toFixed(2)}ms - title: "${params.title}", width: ${params.width}, isProcessing: ${isProcessing}`);
   
   if (!isProcessing) {
     // Set the flag immediately to prevent scheduling multiple processing calls.

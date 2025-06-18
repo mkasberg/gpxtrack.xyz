@@ -23,8 +23,6 @@ worker.onmessage = (event) => {
     return;
   }
   
-  console.log(`[MAIN] Worker response received at ${performance.now().toFixed(2)}ms - title: "${params.title}", width: ${params.width}`);
-  
   // Update the preview with the generated mesh data
   updateMiniature({ baseMesh, polylineMesh, textMesh, params });
 };
@@ -87,7 +85,6 @@ function handleInput(e: Event) {
   
   displayValues(currentGpxParams);
   
-  console.log(`[MAIN] Sending params to worker at ${performance.now().toFixed(2)}ms - title: "${currentGpxParams.title}", width: ${currentGpxParams.width}`);
   // Send parameters to worker instead of calling updateMiniature directly
   worker.postMessage(currentGpxParams);
 }
