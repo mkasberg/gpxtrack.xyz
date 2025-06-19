@@ -101,8 +101,8 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   //scene.add(axesHelper);
 
   // Edge-emphasizing lighting setup with shadow configuration
-  // Main light from top-right with shadows
-  const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  // Main light from top-right with shadows - warm golden sunrise light
+  const mainLight = new THREE.DirectionalLight(0xFFD700, 0.9); // Golden color, slightly reduced intensity
   mainLight.position.set(100, 100, 0);
   mainLight.castShadow = true;
   
@@ -126,13 +126,13 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   
   scene.add(mainLight);
 
-  // Edge light from top-left (no shadows to avoid conflicts)
-  const edgeLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  // Edge light from top-left - soft warm peach fill light (no shadows to avoid conflicts)
+  const edgeLight = new THREE.DirectionalLight(0xFFE0B2, 0.8); // Light warm peach
   edgeLight.position.set(-50, 100, 75);
   scene.add(edgeLight);
 
-  // Back light for depth (no shadows)
-  const backLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  // Back light for depth - subtle cream tone (no shadows)
+  const backLight = new THREE.DirectionalLight(0xFFF8DC, 0.6); // Cream color
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
