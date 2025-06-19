@@ -67,3 +67,15 @@ declare module '*.json' {
   const content: any;
   export default content;
 }
+
+// Third-party modules without TypeScript declarations
+declare module '@jscadui/3mf-export' {
+  export const fileForContentTypes: any;
+  export class FileForRelThumbnail {
+    constructor();
+    add3dModel(path: string): void;
+    name: string;
+    content: string;
+  }
+  export function to3dmodel(data: any): string;
+}
