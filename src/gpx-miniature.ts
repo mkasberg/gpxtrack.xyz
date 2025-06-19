@@ -273,7 +273,7 @@ export const defaultParams: GpxMiniatureParams = {
   textThickness: 2,
   margin: 2.5,
   maxPolylineHeight: 20,
-  baseColor: "#1a1a1a",
+  baseColor: "#2b2b2b",
   polylineColor: "#fc5200",
   slantedTextPlate: true
 };
