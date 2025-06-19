@@ -20,7 +20,6 @@
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/assets/og.png" />
-    <link rel="stylesheet" href="./styles.css" />
     <link rel="icon" href="https://fav.farm/🌄" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,34 +28,35 @@
       rel="stylesheet"
     />
   </head>
-  <body>
-    <div class="app">
-      <header>
-        <h1>GPX Track.xyz</h1>
+  <body class="font-barlow text-lg min-h-screen bg-gray-900 text-white m-0 p-0 box-border">
+    <div class="app grid h-screen grid-rows-[auto_1fr_auto] grid-cols-[1fr_auto] w-full lg:grid-cols-1">
+      <header class="grid grid-cols-[auto_1fr] items-center p-4 gap-4 col-span-full md:grid-cols-1 md:text-center">
+        <h1 class="text-4xl font-black text-[var(--color)]">GPX Track.xyz</h1>
         <div>
           <p>Turn GPX activity tracks into 3D prints!</p>
           <p>
-            On <a href="https://github.com/mkasberg/gpxtrack.xyz" target="_blank">GitHub</a>.
-            Made by <a href="https://www.mikekasberg.com">Mike Kasberg</a> with ❤️.
-            Inspired by <a href="https://bracket.engineer/" target="_blank">Bracket.Engineer</a>.
+            On <a href="https://github.com/mkasberg/gpxtrack.xyz" target="_blank" class="text-[var(--color)]">GitHub</a>.
+            Made by <a href="https://www.mikekasberg.com" class="text-[var(--color)]">Mike Kasberg</a> with ❤️.
+            Inspired by <a href="https://bracket.engineer/" target="_blank" class="text-[var(--color)]">Bracket.Engineer</a>.
           </p>
         </div>
       </header>
       <div class="preview">
-        <canvas id="preview"></canvas>
+        <canvas id="preview" class="w-full h-full block touch-none"></canvas>
       </div>
-      <form class="controls" id="controls">
-        <div class="control-group">
-          <label for="title">Title</label>
+      <form class="controls p-6 gap-4 w-full bg-black/80 grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] content-start touch-none overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20" id="controls">
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="title" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Title</label>
           <input
             type="text"
             id="title"
             name="title"
             value="Century *100*"
+            class="flex-1 min-w-[200px] px-3 py-2 bg-white/10 border border-white/20 rounded text-white font-barlow text-base outline-none transition-all duration-200 placeholder:text-white/50 focus:bg-white/15 focus:border-[var(--color)] focus:shadow-[0_0_0_2px_rgba(252,82,0,0.2)]"
           />
         </div>
-        <div class="control-group">
-          <label for="fontSize">Font Size</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="fontSize" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Font Size</label>
           <input
             type="range"
             id="fontSize"
@@ -65,19 +65,20 @@
             max="12"
             step="0.5"
             value="5.5"
+            class="flex-1 min-w-[100px] h-1 bg-white/10 rounded outline-none appearance-none slider"
           />
           <input
             type="number"
             id="fontSizeValue"
-            class="value-display"
+            class="value-display flex-none w-[60px] text-base text-white/60 text-center bg-transparent border-0 rounded focus:outline focus:outline-1 focus:outline-white/20"
             value="5.5"
             step="0.5"
             min="3"
             max="10"
           />
         </div>
-        <div class="control-group">
-          <label for="mapRotation">Map Rotation</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="mapRotation" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Map Rotation</label>
           <input
             type="range"
             id="mapRotation"
@@ -86,16 +87,17 @@
             max="180"
             step="1"
             value="0"
+            class="flex-1 min-w-[100px] h-1 bg-white/10 rounded outline-none appearance-none slider"
           />
           <input
             type="number"
             id="mapRotationValue"
-            class="value-display"
+            class="value-display flex-none w-[60px] text-base text-white/60 text-center bg-transparent border-0 rounded focus:outline focus:outline-1 focus:outline-white/20"
             value="0"
           />
         </div>
-        <div class="control-group">
-          <label for="truncatePct">Truncate %</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="truncatePct" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Truncate %</label>
           <input
             type="range"
             id="truncatePct"
@@ -104,16 +106,17 @@
             max="100"
             step="1"
             value="100"
+            class="flex-1 min-w-[100px] h-1 bg-white/10 rounded outline-none appearance-none slider"
           />
           <input
             type="number"
             id="truncatePctValue"
-            class="value-display"
+            class="value-display flex-none w-[60px] text-base text-white/60 text-center bg-transparent border-0 rounded focus:outline focus:outline-1 focus:outline-white/20"
             value="100"
           />
         </div>
-        <div class="control-group">
-          <label for="width">Base Width</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="width" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Base Width</label>
           <input
             type="range"
             id="width"
@@ -122,16 +125,17 @@
             max="200"
             step="1"
             value="50"
+            class="flex-1 min-w-[100px] h-1 bg-white/10 rounded outline-none appearance-none slider"
           />
           <input
             type="number"
             id="widthValue"
-            class="value-display"
+            class="value-display flex-none w-[60px] text-base text-white/60 text-center bg-transparent border-0 rounded focus:outline focus:outline-1 focus:outline-white/20"
             value="50"
           />
         </div>
-        <div class="control-group">
-          <label for="thickness">Base Thickness</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="thickness" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Base Thickness</label>
           <input
             type="range"
             id="thickness"
@@ -140,16 +144,17 @@
             max="10"
             step="0.5"
             value="5"
+            class="flex-1 min-w-[100px] h-1 bg-white/10 rounded outline-none appearance-none slider"
           />
           <input
             type="number"
             id="thicknessValue"
-            class="value-display"
+            class="value-display flex-none w-[60px] text-base text-white/60 text-center bg-transparent border-0 rounded focus:outline focus:outline-1 focus:outline-white/20"
             value="5"
           />
         </div>
-        <div class="control-group">
-          <label for="maxPolylineHeight">Max Track Height</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="maxPolylineHeight" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Max Track Height</label>
           <input
             type="range"
             id="maxPolylineHeight"
@@ -158,40 +163,82 @@
             max="200"
             step="1"
             value="20"
+            class="flex-1 min-w-[100px] h-1 bg-white/10 rounded outline-none appearance-none slider"
           />
           <input
             type="number"
             id="maxPolylineHeightValue"
-            class="value-display"
+            class="value-display flex-none w-[60px] text-base text-white/60 text-center bg-transparent border-0 rounded focus:outline focus:outline-1 focus:outline-white/20"
             value="20"
           />
         </div>
-        <div class="control-group">
-          <label for="slantedTextPlate">Slanted Text Plate</label>
+        <div class="control-group flex items-center gap-2.5 min-w-0">
+          <label for="slantedTextPlate" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Slanted Text Plate</label>
           <input
             type="checkbox"
             id="slantedTextPlate"
             name="slantedTextPlate"
             checked
+            class="w-5 h-5 text-[var(--color)] bg-white/10 border-white/20 rounded focus:ring-[var(--color)] focus:ring-2"
           />
         </div>
-        <div class="control-group colors">
-          <div>
-            <label for="baseColor">Base Color</label>
-            <input type="color" id="baseColor" name="baseColor" value="#000000" />
+        <div class="control-group colors flex gap-12 col-span-full justify-center">
+          <div class="flex items-center gap-2.5">
+            <label for="baseColor" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Base Color</label>
+            <input type="color" id="baseColor" name="baseColor" value="#000000" class="w-10 h-10 border-0 rounded cursor-pointer" />
           </div>
-          <div>
-            <label for="polylineColor">Polyline Color</label>
-            <input type="color" id="polylineColor" name="polylineColor" value="#fc5200" />
+          <div class="flex items-center gap-2.5">
+            <label for="polylineColor" class="text-sm font-medium text-white text-right whitespace-nowrap text-xl">Polyline Color</label>
+            <input type="color" id="polylineColor" name="polylineColor" value="#fc5200" class="w-10 h-10 border-0 rounded cursor-pointer" />
           </div>
         </div>
-        <div class="control-group buttons">
+        <div class="control-group buttons flex gap-5 col-span-full justify-center mt-2.5">
           <input type="file" id="gpxFile" accept=".gpx" style="display: none;" />
-          <button type="button" id="importGpxButton">Import GPX</button>
-          <button type="button" id="export-button">Export 3MF</button>
+          <button type="button" id="importGpxButton" class="border-0 bg-[var(--color)] px-5 py-1.5 rounded text-xl font-bold text-black cursor-pointer font-barlow">Import GPX</button>
+          <button type="button" id="export-button" class="border-0 bg-[var(--color)] px-5 py-1.5 rounded text-xl font-bold text-black cursor-pointer font-barlow">Export 3MF</button>
         </div>
       </form>
     </div>
+
+    <style>
+      :root {
+        --color: #fc5200;
+      }
+      
+      /* Custom slider styles for WebKit browsers */
+      .slider::-webkit-slider-thumb {
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        background: var(--color);
+        cursor: pointer;
+        -webkit-appearance: none;
+      }
+      
+      /* Custom slider styles for Firefox */
+      .slider::-moz-range-thumb {
+        background: var(--color);
+        border: none;
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      
+      /* Custom scrollbar styles */
+      .controls::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .controls::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .controls::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+    </style>
 
     <script type="module" src="./app.ts"></script>
   </body>
