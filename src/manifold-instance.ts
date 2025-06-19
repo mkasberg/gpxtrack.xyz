@@ -2,9 +2,9 @@ import Module from 'manifold-3d';
 import type { Manifold, CrossSection } from 'manifold-3d';
 
 // Single promise that will be reused for all initialization requests
-let initPromise: Promise<{ Manifold: typeof Manifold; CrossSection: typeof CrossSection }> | null = null;
+let initPromise: Promise<{ Manifold: any; CrossSection: any }> | null = null;
 
-export async function getManifoldInstance() {
+export async function getManifoldInstance(): Promise<{ Manifold: any; CrossSection: any }> {
   if (!initPromise) {
     // Create the promise only once
     initPromise = (async () => {
