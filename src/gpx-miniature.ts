@@ -1,5 +1,6 @@
 import { getManifoldInstance } from './manifold-instance';
 import { create3DText } from './text-3d';
+import type { Manifold } from 'manifold-3d';
 
 export interface GpxMiniatureParams {
   title: string;
