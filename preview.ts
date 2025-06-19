@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper } from 'three';
-import { createGpxMiniatureComponents, defaultParams } from './gpx-miniature.js';
-import { Manifold } from './manifold-instance.js';
+import { defaultParams } from './gpx-miniature.js';
 
 interface GpxMiniatureParams {
   title: string;
@@ -22,31 +21,36 @@ interface GpxMiniatureParams {
   slantedTextPlate: boolean;
 }
 
-interface GpxMiniatureComponents {
-  base: Manifold;
-  polyline: Manifold;
-  text: Manifold;
+interface MeshData {
+  vertProperties: Float32Array;
+  triVerts: Uint32Array;
+  isEmpty: boolean;
+}
+
+interface WorkerMeshData {
+  baseMesh: MeshData;
+  polylineMesh: MeshData;
+  textMesh: MeshData;
+  params: GpxMiniatureParams;
 }
 
 /**
- * Converts a Manifold object to a Three.js mesh with common transformations applied
+ * Converts mesh data to a Three.js mesh with common transformations applied
  */
-function manifoldToThreeMesh(
-  manifold: Manifold, 
+function meshDataToThreeMesh(
+  meshData: MeshData, 
   material: MeshStandardMaterial, 
   params: GpxMiniatureParams
 ): ThreeMesh | null {
-  if (manifold.isEmpty()) {
+  if (meshData.isEmpty || meshData.vertProperties.length === 0) {
     return null;
   }
 
-  // Get mesh data from manifold
-  const meshData = manifold.getMesh();
-  
   // Create Three.js geometry
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new BufferAttribute(meshData.vertProperties, 3));
   geometry.setIndex(new BufferAttribute(meshData.triVerts, 1));
+  
   geometry.computeVertexNormals();
 
   // Create mesh with shadows enabled
@@ -137,7 +141,9 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
 
   // Function to center and fit the object in view
   function centerAndFitObject() {
-    if (!baseMesh && !polylineMesh && !textMesh) return;
+    if (!baseMesh && !polylineMesh && !textMesh) {
+      return;
+    }
 
     const box = new THREE.Box3();
     if (baseMesh) box.expandByObject(baseMesh);
@@ -162,7 +168,9 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     controls.update();
   }
 
-  async function updateMiniature(params: GpxMiniatureParams) {
+  function updateMiniature(data: WorkerMeshData) {
+    const { baseMesh: baseMeshData, polylineMesh: polylineMeshData, textMesh: textMeshData, params } = data;
+    
     // Remove old meshes if they exist
     if (baseMesh) {
       scene.remove(baseMesh);
@@ -184,22 +192,19 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     baseMaterial.color.set(params.baseColor);
     polylineMaterial.color.set(params.polylineColor);
 
-    // Create new miniature components
-    const components = await createGpxMiniatureComponents(params);
-
-    // Convert components to Three.js meshes using the helper function
-    baseMesh = manifoldToThreeMesh(components.base, baseMaterial, params);
+    // Convert mesh data to Three.js meshes using the helper function
+    baseMesh = meshDataToThreeMesh(baseMeshData, baseMaterial, params);
     if (baseMesh) {
       scene.add(baseMesh);
     }
 
-    polylineMesh = manifoldToThreeMesh(components.polyline, polylineMaterial, params);
+    polylineMesh = meshDataToThreeMesh(polylineMeshData, polylineMaterial, params);
     if (polylineMesh) {
       scene.add(polylineMesh);
     }
 
     // Use polyline material for text to maintain the same color
-    textMesh = manifoldToThreeMesh(components.text, polylineMaterial, params);
+    textMesh = meshDataToThreeMesh(textMeshData, polylineMaterial, params);
     if (textMesh) {
       scene.add(textMesh);
     }

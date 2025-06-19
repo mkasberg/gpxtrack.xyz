@@ -11,6 +11,22 @@ let currentGpxParams: GpxMiniatureParams = { ...defaultParams };
 const canvas = document.getElementById("preview") as HTMLCanvasElement;
 const updateMiniature = setupPreview(canvas);
 
+// Initialize the web worker
+const worker = new Worker(new URL('./model-worker.ts', import.meta.url), { type: 'module' });
+
+// Handle messages from the worker
+worker.onmessage = (event) => {
+  const { baseMesh, polylineMesh, textMesh, params, error } = event.data;
+  
+  if (error) {
+    console.error('Worker error:', error);
+    return;
+  }
+  
+  // Update the preview with the generated mesh data
+  updateMiniature({ baseMesh, polylineMesh, textMesh, params });
+};
+
 const controls = document.querySelector<HTMLFormElement>("#controls");
 
 // Get all range inputs
@@ -68,7 +84,9 @@ function handleInput(e: Event) {
   };
   
   displayValues(currentGpxParams);
-  updateMiniature(currentGpxParams);
+  
+  // Send parameters to worker instead of calling updateMiniature directly
+  worker.postMessage(currentGpxParams);
 }
 
 // Enable form handling
@@ -88,9 +106,9 @@ function restoreState() {
       }
     }
   }
-  // Update display values and miniature directly
+  // Update display values and send to worker
   displayValues(currentGpxParams);
-  updateMiniature(currentGpxParams);
+  worker.postMessage(currentGpxParams);
 }
 
 // Enable state restoration
@@ -159,7 +177,8 @@ gpxFileInput.addEventListener('change', async (e) => {
     };
   }
 
-  updateMiniature(currentGpxParams);
+  // Send updated parameters to worker
+  worker.postMessage(currentGpxParams);
 });
 
 const exportButton = document.getElementById("export-button") as HTMLButtonElement;
