@@ -68,7 +68,8 @@ async function processNext() {
       textMesh.triVerts.buffer
     ];
     
-    self.postMessage(response, transferables);
+    // Use options object to properly specify transferables
+    self.postMessage(response, { transfer: transferables });
   } catch (error) {
     console.error('Error in model worker:', error);
     // Send an error response with proper type handling
