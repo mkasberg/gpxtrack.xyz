@@ -68,6 +68,12 @@ function displayValues(params: GpxMiniatureParams) {
 }
 
 function handleInput(e: Event) {
+  // Early return if controls is null
+  if (!controls) {
+    console.error('Controls element not found');
+    return;
+  }
+
   // If someone types into a valueDisplay, update the input
   if((e.target as HTMLElement).classList.contains('value-display')) {
     const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement;
