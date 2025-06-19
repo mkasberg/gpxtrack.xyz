@@ -1,5 +1,6 @@
 import { getManifoldInstance } from './manifold-instance';
 import { create3DText } from './text-3d';
+import type { Manifold } from 'manifold-3d';
 
 export interface GpxMiniatureParams {
   title: string;
@@ -154,6 +155,8 @@ async function createTextPlate(params: GpxMiniatureParams): Promise<{ plate: Man
   if (!rawText || rawText.isEmpty()) {
     // If text creation failed, return empty text
     text = new Manifold();
+    // Create flat text plate
+    textSurface = Manifold.cube([params.width, params.plateDepth, params.thickness]);
   } else {
     // Get the bounding box of the text to calculate centering
     const textBounds = rawText.boundingBox();

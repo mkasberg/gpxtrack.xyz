@@ -38,11 +38,16 @@ const displayInputs = Array.from(controls?.querySelectorAll<HTMLInputElement>("i
 function parseFormData(data: FormData) {
   const params: Record<string, any> = {};
   for(const [key, value] of data.entries()) {
+    // Skip file inputs - they are handled separately
+    if (value instanceof File) {
+      continue;
+    }
+    
     // First see if it's a checkbox
     if(value === "on") {
       params[key] = true;
     } else {
-      const maybeNumber = parseFloat(value);
+      const maybeNumber = parseFloat(value as string);
       params[key] = isNaN(maybeNumber) ? value : maybeNumber;
     }
   }
@@ -63,10 +68,16 @@ function displayValues(params: GpxMiniatureParams) {
 }
 
 function handleInput(e: Event) {
+  // Early return if controls is null
+  if (!controls) {
+    console.error('Controls element not found');
+    return;
+  }
+
   // If someone types into a valueDisplay, update the input
-  if(e.target.classList.contains('value-display')) {
-    const input = e.target.previousElementSibling as HTMLInputElement;
-    input.value = e.target.value;
+  if((e.target as HTMLElement).classList.contains('value-display')) {
+    const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement;
+    input.value = (e.target as HTMLInputElement).value;
   }
   
   // Parse form data and merge with current state to preserve GPX data
@@ -90,8 +101,8 @@ function handleInput(e: Event) {
 }
 
 // Enable form handling
-controls.addEventListener("input", handleInput);
-controls.addEventListener("change", handleInput); // Also listen for change events (important for checkboxes)
+controls?.addEventListener("input", handleInput);
+controls?.addEventListener("change", handleInput); // Also listen for change events (important for checkboxes)
 
 // On page load, restore state from defaults
 function restoreState() {
@@ -145,8 +156,8 @@ gpxFileInput.addEventListener('change', async (e) => {
   // Extract lat/lon and elevation data
   for (let i = 0; i < trackPoints.snapshotLength; i++) {
     const trkpt = trackPoints.snapshotItem(i) as Element;
-    const lat = parseFloat(trkpt.getAttribute('lat'));
-    const lon = parseFloat(trkpt.getAttribute('lon'));
+    const lat = parseFloat(trkpt.getAttribute('lat') || '0');
+    const lon = parseFloat(trkpt.getAttribute('lon') || '0');
     const ele = parseFloat(trkpt.querySelector('ele')?.textContent || '0');
 
     if (!isNaN(lat) && !isNaN(lon) && !isNaN(ele)) {
