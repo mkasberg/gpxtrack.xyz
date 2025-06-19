@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  root: 'src',
   worker: {
     format: 'es',
   },
@@ -9,5 +10,6 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    outDir: '../dist',
   }
 })
