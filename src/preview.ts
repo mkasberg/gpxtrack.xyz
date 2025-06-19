@@ -79,7 +79,7 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   camera.position.set(50, 100, 75);
   camera.lookAt(0, 0, 0);
 
-  // Set up Three.js renderer with better quality settings
+  // Set up Three.js renderer with better quality settings and shadows
   const renderer = new WebGLRenderer({
     canvas,
     antialias: true,
@@ -90,28 +90,48 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  // Add grid helper with better visibility
+  // Add grid helper with better visibility - enable shadow receiving
   const gridHelper = new GridHelper(200, 50, 0x444444, 0x444444);
   gridHelper.position.y = -0.01;
+  gridHelper.receiveShadow = true;
   scene.add(gridHelper);
 
   // Add axis helper
   //const axesHelper = new AxesHelper(50);
   //scene.add(axesHelper);
 
-  // Edge-emphasizing lighting setup
-  // Main light from top-right
+  // Edge-emphasizing lighting setup with shadow configuration
+  // Main light from top-right with shadows
   const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
   mainLight.position.set(100, 100, 0);
-  mainLight.castShadow = false;
+  mainLight.castShadow = true;
+  
+  // Configure shadow camera to encompass the model area
+  // Since model is centered at origin and roughly params.width in size,
+  // we'll set up the shadow camera to cover a bit more than that area
+  const shadowSize = defaultParams.width * 1.5; // Add some padding
+  mainLight.shadow.camera.left = -shadowSize / 2;
+  mainLight.shadow.camera.right = shadowSize / 2;
+  mainLight.shadow.camera.top = shadowSize / 2;
+  mainLight.shadow.camera.bottom = -shadowSize / 2;
+  mainLight.shadow.camera.near = 50;
+  mainLight.shadow.camera.far = 200;
+  
+  // Higher resolution shadow map for better quality
+  mainLight.shadow.mapSize.width = 2048;
+  mainLight.shadow.mapSize.height = 2048;
+  
+  // Reduce shadow acne with bias
+  mainLight.shadow.bias = -0.0001;
+  
   scene.add(mainLight);
 
-  // Edge light from top-left
+  // Edge light from top-left (no shadows to avoid conflicts)
   const edgeLight = new THREE.DirectionalLight(0xffffff, 0.8);
   edgeLight.position.set(-50, 100, 75);
   scene.add(edgeLight);
 
-  // Back light for depth
+  // Back light for depth (no shadows)
   const backLight = new THREE.DirectionalLight(0xffffff, 0.6);
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
@@ -191,6 +211,14 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     // Update material colors
     baseMaterial.color.set(params.baseColor);
     polylineMaterial.color.set(params.polylineColor);
+
+    // Update shadow camera size based on current model parameters
+    const shadowSize = params.width * 1.5;
+    mainLight.shadow.camera.left = -shadowSize / 2;
+    mainLight.shadow.camera.right = shadowSize / 2;
+    mainLight.shadow.camera.top = shadowSize / 2;
+    mainLight.shadow.camera.bottom = -shadowSize / 2;
+    mainLight.shadow.camera.updateProjectionMatrix();
 
     // Convert mesh data to Three.js meshes using the helper function
     baseMesh = meshDataToThreeMesh(baseMeshData, baseMaterial, params);
