@@ -1,21 +1,19 @@
 {
-  "name": "bracket-engineer",
+  "name": "gpxtrack-xyz",
   "version": "0.0.1",
-  "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --emptyOutDir",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
-  "author": "Wes Bos (https://wesbos.com/)",
+  "author": "Mike Kasberg (https://www.mikekasberg.com/)",
   "license": "MIT",
   "description": "",
   "type": "module",
   "dependencies": {
     "@fontsource/barlow": "^5.2.6",
     "@jscadui/3mf-export": "^0.5.0",
-    "@types/three": "^0.176.0",
     "manifold-3d": "^3.0.1",
     "opentype.js": "^1.3.4",
     "three": "^0.176.0"
@@ -23,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^22.15.3",
     "@types/opentype.js": "^1.3.8",
+    "@types/three": "^0.176.0",
     "typescript": "^5.7.2",
     "vite": "^6.3.3"
   }
