@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper } from 'three';
+import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper, HemisphereLight } from 'three';
 import { defaultParams } from './gpx-miniature.js';
 
 interface GpxMiniatureParams {
@@ -136,8 +136,16 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
-  // Ambient light for overall scene illumination
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  // Hemisphere light for sunrise effect - simulates natural outdoor lighting
+  const hemisphereLight = new HemisphereLight(
+    0xFFCC80, // Sky color - warm sunrise orange
+    0x443300, // Ground color - dark earthy brown
+    0.5       // Intensity
+  );
+  scene.add(hemisphereLight);
+
+  // Ambient light with warm sunrise tone
+  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.2);
   scene.add(ambientLight);
 
   // Create materials with edge emphasis
