@@ -1,4 +1,4 @@
-![](./assets/website.png)
+![](./public/assets/website.png)
 
 # GPX Track.xyz
 
