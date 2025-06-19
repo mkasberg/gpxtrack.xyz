@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
-import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper, PMREMGenerator } from 'three';
+import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper } from 'three';
 import { defaultParams } from './gpx-miniature.js';
 
 interface GpxMiniatureParams {
@@ -91,22 +90,6 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  // Load HDR environment map for lighting
-  const rgbeLoader = new RGBELoader();
-  const pmremGenerator = new PMREMGenerator(renderer);
-  pmremGenerator.compileEquirectangularShader();
-
-  rgbeLoader.load('/assets/hdri/bloem_field_sunrise_1k.hdr', (texture) => {
-    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-    
-    // Set environment map for lighting only (not background)
-    scene.environment = envMap;
-    
-    // Clean up
-    texture.dispose();
-    pmremGenerator.dispose();
-  });
-
   // Add grid helper with better visibility - enable shadow receiving
   const gridHelper = new GridHelper(200, 50, 0x444444, 0x444444);
   gridHelper.position.y = -0.01;
@@ -118,9 +101,8 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   //scene.add(axesHelper);
 
   // Edge-emphasizing lighting setup with shadow configuration
-  // Reduced intensities since HDR environment map will provide global illumination
   // Main light from top-right with shadows
-  const mainLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
   mainLight.position.set(100, 100, 0);
   mainLight.castShadow = true;
   
@@ -144,18 +126,18 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   
   scene.add(mainLight);
 
-  // Edge light from top-left (no shadows to avoid conflicts) - reduced intensity
-  const edgeLight = new THREE.DirectionalLight(0xffffff, 0.3);
+  // Edge light from top-left (no shadows to avoid conflicts)
+  const edgeLight = new THREE.DirectionalLight(0xffffff, 0.8);
   edgeLight.position.set(-50, 100, 75);
   scene.add(edgeLight);
 
-  // Back light for depth (no shadows) - reduced intensity
-  const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+  // Back light for depth (no shadows)
+  const backLight = new THREE.DirectionalLight(0xffffff, 0.6);
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
-  // Ambient light for overall scene illumination - reduced intensity
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+  // Ambient light for overall scene illumination
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
   scene.add(ambientLight);
 
   // Create materials with edge emphasis
