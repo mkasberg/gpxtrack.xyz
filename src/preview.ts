@@ -51,10 +51,11 @@ function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
   const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
   
   // Royal blue to dusk blue gradient - focused on visible portion (0.5 to 1.0)
-  gradient.addColorStop(0.5,  '#4169E1');   // Royal Blue (deeply saturated)
-  gradient.addColorStop(0.7,  '#2F4F8F');   // Steel Blue (rich medium tone)
-  gradient.addColorStop(0.85, '#191970');   // Midnight Blue (deep, dramatic)
-  gradient.addColorStop(1.0,  '#0F0F23');   // Very dark dusk blue (almost black with blue undertones)
+  gradient.addColorStop(0,   '#c905ff');    // Top: Deep purple
+  gradient.addColorStop(0.2, '#7605ff');    // Upper-mid: purple
+  gradient.addColorStop(0.45, '#0566ed');   // Mid: blue
+  gradient.addColorStop(0.75, '#0a97fc');   // Lower-mid: Bright Sky-blue
+  gradient.addColorStop(1,    '#0041cc');   // Bottom: dark blue
   
   // Fill the canvas with the gradient
   context.fillStyle = gradient;
@@ -120,7 +121,7 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
 
   // Create camera with a better initial position
   const camera = new PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-  camera.position.set(50, 100, 75);
+  camera.position.set(0, 100, 75);
   camera.lookAt(0, 0, 0);
 
   // Set up Three.js renderer with better quality settings and shadows
@@ -150,7 +151,7 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   // Edge-emphasizing lighting setup with shadow configuration
   // Main light from top-right with shadows - warm golden sunrise light
   const mainLight = new THREE.DirectionalLight(0xFFD700, 0.9); // Golden color, slightly reduced intensity
-  mainLight.position.set(100, 100, 0);
+  mainLight.position.set(100, 40, 20);
   mainLight.castShadow = true;
   
   // Configure shadow camera to encompass the model area
@@ -175,7 +176,7 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
 
   // Edge light from top-left - soft warm peach fill light (no shadows to avoid conflicts)
   const edgeLight = new THREE.DirectionalLight(0xFFE0B2, 0.8); // Light warm peach
-  edgeLight.position.set(-50, 100, 75);
+  edgeLight.position.set(15, 100, 75);
   scene.add(edgeLight);
 
   // Back light for depth - subtle cream tone (no shadows)
@@ -183,16 +184,16 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
-  // Hemisphere light for sunrise effect - simulates natural outdoor lighting (BRIGHTENED)
+  // Hemisphere light for sunrise effect - simulates natural outdoor lighting
   const hemisphereLight = new HemisphereLight(
     0xFFCC80, // Sky color - warm sunrise orange
     0x443300, // Ground color - dark earthy brown
-    0.7       // Intensity - increased from 0.5 to 0.7
+    0.6       // Intensity
   );
   scene.add(hemisphereLight);
 
-  // Ambient light with warm sunrise tone (BRIGHTENED)
-  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.4); // Increased from 0.2 to 0.4
+  // Ambient light with warm sunrise tone
+  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.4);
   scene.add(ambientLight);
 
   // Create materials with edge emphasis
