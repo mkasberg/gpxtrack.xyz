@@ -50,13 +50,13 @@ function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
   // Create a vertical linear gradient from top to bottom
   const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
   
-  // Dark blue morning sky gradient - much darker in visible portion (0.4 to 1.0 range)
-  gradient.addColorStop(0, '#0A0F1A');    // Top: Very deep navy
-  gradient.addColorStop(0.3, '#0F1B2E');  // Upper: Deep navy blue
-  gradient.addColorStop(0.4, '#1E2A4A');  // Start of visible range: Dark blue
-  gradient.addColorStop(0.7, '#2A3B5C');  // Mid visible: Medium dark blue
-  gradient.addColorStop(0.9, '#3A4B6B');  // Lower visible: Darker blue
-  gradient.addColorStop(1, '#4A5B7A');    // Bottom: Deep blue (no pale tones)
+  // Royal blue to dusk blue gradient - focused on visible portion (0.5 to 1.0)
+  gradient.addColorStop(0, '#1a1a2e');      // Top: Very dark blue-black
+  gradient.addColorStop(0.3, '#16213e');    // Upper: Dark navy
+  gradient.addColorStop(0.5, '#4169E1');    // Start of main visible: Royal Blue (deeply saturated)
+  gradient.addColorStop(0.7, '#2F4F8F');    // Mid visible: Steel Blue (rich)
+  gradient.addColorStop(0.85, '#191970');   // Lower visible: Midnight Blue
+  gradient.addColorStop(1, '#0F0F23');      // Bottom: Very dark dusk blue
   
   // Fill the canvas with the gradient
   context.fillStyle = gradient;
