@@ -101,8 +101,8 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   //scene.add(axesHelper);
 
   // Edge-emphasizing lighting setup with shadow configuration
-  // Main light from top-right with shadows - warm golden sunrise light (increased intensity)
-  const mainLight = new THREE.DirectionalLight(0xFFD700, 1.3); // Increased from 0.9 to 1.3
+  // Main light from top-right with shadows - warm golden sunrise light
+  const mainLight = new THREE.DirectionalLight(0xFFD700, 0.9); // Golden color, slightly reduced intensity
   mainLight.position.set(100, 100, 0);
   mainLight.castShadow = true;
   
@@ -126,26 +126,26 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   
   scene.add(mainLight);
 
-  // Edge light from top-left - soft warm peach fill light (increased intensity)
-  const edgeLight = new THREE.DirectionalLight(0xFFE0B2, 1.0); // Increased from 0.8 to 1.0
+  // Edge light from top-left - soft warm peach fill light (no shadows to avoid conflicts)
+  const edgeLight = new THREE.DirectionalLight(0xFFE0B2, 0.8); // Light warm peach
   edgeLight.position.set(-50, 100, 75);
   scene.add(edgeLight);
 
-  // Back light for depth - subtle cream tone (increased intensity)
-  const backLight = new THREE.DirectionalLight(0xFFF8DC, 0.8); // Increased from 0.6 to 0.8
+  // Back light for depth - subtle cream tone (no shadows)
+  const backLight = new THREE.DirectionalLight(0xFFF8DC, 0.6); // Cream color
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
-  // Hemisphere light for sunrise effect - simulates natural outdoor lighting (increased intensity)
+  // Hemisphere light for sunrise effect - simulates natural outdoor lighting
   const hemisphereLight = new HemisphereLight(
     0xFFCC80, // Sky color - warm sunrise orange
     0x443300, // Ground color - dark earthy brown
-    0.7       // Increased from 0.5 to 0.7
+    0.5       // Intensity
   );
   scene.add(hemisphereLight);
 
-  // Ambient light with warm sunrise tone (increased intensity)
-  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.4); // Increased from 0.2 to 0.4
+  // Ambient light with warm sunrise tone
+  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.2);
   scene.add(ambientLight);
 
   // Create materials with adjusted metallic and roughness properties
