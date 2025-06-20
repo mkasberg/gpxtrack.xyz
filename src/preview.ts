@@ -35,6 +35,46 @@ interface WorkerMeshData {
 }
 
 /**
+ * Creates a gradient background using a large sphere with gradient material
+ */
+function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
+  // Create a large sphere geometry that will act as our background
+  const sphereGeometry = new THREE.SphereGeometry(500, 32, 32);
+  
+  // Create a canvas for the gradient texture
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const context = canvas.getContext('2d')!;
+  
+  // Create a radial gradient from center to edge
+  const gradient = context.createRadialGradient(256, 256, 0, 256, 256, 256);
+  gradient.addColorStop(0, '#0a0a2a'); // Very dark blue in center
+  gradient.addColorStop(0.5, '#050515'); // Darker blue-black in middle
+  gradient.addColorStop(1, '#000008'); // Almost black at edges
+  
+  // Fill the canvas with the gradient
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, 512, 512);
+  
+  // Create texture from canvas
+  const texture = new THREE.CanvasTexture(canvas);
+  
+  // Create material that will be unaffected by lighting
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.BackSide, // Render on the inside of the sphere
+    fog: false
+  });
+  
+  // Create the background sphere
+  const backgroundSphere = new THREE.Mesh(sphereGeometry, material);
+  scene.add(backgroundSphere);
+  
+  return backgroundSphere;
+}
+
+/**
  * Converts mesh data to a Three.js mesh with common transformations applied
  */
 function meshDataToThreeMesh(
@@ -72,7 +112,8 @@ function meshDataToThreeMesh(
 export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params: GpxMiniatureParams) => void) {
   // Set up Three.js scene
   const scene = new Scene();
-  scene.background = new THREE.Color(0x1a1a1a);
+  // Remove the solid background color since we'll use a gradient background
+  // scene.background = new THREE.Color(0x1a1a1a);
 
   // Create camera with a better initial position
   const camera = new PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
@@ -89,6 +130,9 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // Create the gradient background
+  const backgroundSphere = createGradientBackground(scene, renderer);
 
   // Add grid helper with better visibility - enable shadow receiving
   const gridHelper = new GridHelper(200, 50, 0x444444, 0x444444);
