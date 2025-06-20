@@ -47,11 +47,12 @@ function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
   canvas.height = 512;
   const context = canvas.getContext('2d')!;
   
-  // Create a radial gradient from center to edge
-  const gradient = context.createRadialGradient(256, 256, 0, 256, 256, 256);
-  gradient.addColorStop(0, '#0a0a2a'); // Very dark blue in center
-  gradient.addColorStop(0.5, '#050515'); // Darker blue-black in middle
-  gradient.addColorStop(1, '#000008'); // Almost black at edges
+  // Create a vertical linear gradient from top to bottom
+  const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, '#0A0A2A'); // Top: Deep Night Blue
+  gradient.addColorStop(0.3, '#1E3A8A'); // Upper middle: Royal Blue
+  gradient.addColorStop(0.6, '#F59E0B'); // Lower middle: Amber/Golden
+  gradient.addColorStop(1, '#FFA07A'); // Bottom: Light Salmon / Sunrise Orange
   
   // Fill the canvas with the gradient
   context.fillStyle = gradient;
