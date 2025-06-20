@@ -140,12 +140,12 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   const hemisphereLight = new HemisphereLight(
     0xFFCC80, // Sky color - warm sunrise orange
     0x443300, // Ground color - dark earthy brown
-    1.0       // Increased from 0.7 to 1.0
+    0.7       // Increased from 0.5 to 0.7
   );
   scene.add(hemisphereLight);
 
   // Ambient light with warm sunrise tone (increased intensity)
-  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.6); // Increased from 0.4 to 0.6
+  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.4); // Increased from 0.2 to 0.4
   scene.add(ambientLight);
 
   // Create materials with adjusted metallic and roughness properties
