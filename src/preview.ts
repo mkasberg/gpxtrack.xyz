@@ -148,18 +148,18 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.2);
   scene.add(ambientLight);
 
-  // Create materials with adjusted metallic and roughness properties
+  // Create materials with edge emphasis
   const baseMaterial = new MeshStandardMaterial({
     color: defaultParams.baseColor,
-    roughness: 0.8,  // Higher roughness for more textured, less reflective appearance
-    metalness: 0.0,  // Non-metallic for dark base surfaces
+    roughness: 0.2,
+    metalness: 0.0,
     flatShading: true
   });
 
   const polylineMaterial = new MeshStandardMaterial({
     color: defaultParams.polylineColor,
-    roughness: 0.3,  // Lower roughness for some reflectivity
-    metalness: 0.7,  // Slightly metallic feel for orange surfaces
+    roughness: 0.2,
+    metalness: 0.0,
     flatShading: true
   });
 
