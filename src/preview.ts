@@ -54,8 +54,8 @@ function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
   gradient.addColorStop(0,   '#2c003e');    // Top: Deep purple
   gradient.addColorStop(0.2, '#3a0066');    // Upper-mid: Dark violet-indigo
   gradient.addColorStop(0.45, '#2a2a6a');   // Mid: Muted blue-violet
-  gradient.addColorStop(0.7,  '#191970');   // Lower-mid: Midnight blue
-  gradient.addColorStop(1,    '#001831');   // Bottom: Deep sea blue-black
+  gradient.addColorStop(0.75, '#191970');   // Lower-mid: Midnight blue
+  gradient.addColorStop(1,    '#191970');   // Bottom: Same — solid Midnight blue
   
   // Fill the canvas with the gradient
   context.fillStyle = gradient;
