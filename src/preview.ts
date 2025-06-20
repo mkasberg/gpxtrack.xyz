@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper } from 'three';
+import { BufferAttribute, BufferGeometry, Mesh as ThreeMesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer, GridHelper, AxesHelper, HemisphereLight } from 'three';
 import { defaultParams } from './gpx-miniature.js';
 
 interface GpxMiniatureParams {
@@ -32,6 +32,50 @@ interface WorkerMeshData {
   polylineMesh: MeshData;
   textMesh: MeshData;
   params: GpxMiniatureParams;
+}
+
+/**
+ * Creates a gradient background using a large sphere with gradient material
+ */
+function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
+  // Create a large sphere geometry that will act as our background
+  const sphereGeometry = new THREE.SphereGeometry(500, 32, 32);
+  
+  // Create a canvas for the gradient texture
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const context = canvas.getContext('2d')!;
+  
+  // Create a vertical linear gradient from top to bottom
+  const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+  
+  // Royal blue to dusk blue gradient - focused on visible portion (0.5 to 1.0)
+  gradient.addColorStop(0,   '#c905ff');    // Top: Deep purple
+  gradient.addColorStop(0.2, '#7605ff');    // Upper-mid: purple
+  gradient.addColorStop(0.45, '#0566ed');   // Mid: blue
+  gradient.addColorStop(0.75, '#0a97fc');   // Lower-mid: Bright Sky-blue
+  gradient.addColorStop(1,    '#0041cc');   // Bottom: dark blue
+  
+  // Fill the canvas with the gradient
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, 512, 512);
+  
+  // Create texture from canvas
+  const texture = new THREE.CanvasTexture(canvas);
+  
+  // Create material that will be unaffected by lighting
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.BackSide, // Render on the inside of the sphere
+    fog: false
+  });
+  
+  // Create the background sphere
+  const backgroundSphere = new THREE.Mesh(sphereGeometry, material);
+  scene.add(backgroundSphere);
+  
+  return backgroundSphere;
 }
 
 /**
@@ -72,14 +116,15 @@ function meshDataToThreeMesh(
 export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params: GpxMiniatureParams) => void) {
   // Set up Three.js scene
   const scene = new Scene();
-  scene.background = new THREE.Color(0x1a1a1a);
+  // Remove the solid background color since we'll use a gradient background
+  // scene.background = new THREE.Color(0x1a1a1a);
 
   // Create camera with a better initial position
   const camera = new PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-  camera.position.set(50, 100, 75);
+  camera.position.set(0, 100, 75);
   camera.lookAt(0, 0, 0);
 
-  // Set up Three.js renderer with better quality settings
+  // Set up Three.js renderer with better quality settings and shadows
   const renderer = new WebGLRenderer({
     canvas,
     antialias: true,
@@ -90,34 +135,65 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  // Add grid helper with better visibility
+  // Create the gradient background
+  const backgroundSphere = createGradientBackground(scene, renderer);
+
+  // Add grid helper with better visibility - enable shadow receiving
   const gridHelper = new GridHelper(200, 50, 0x444444, 0x444444);
   gridHelper.position.y = -0.01;
+  gridHelper.receiveShadow = true;
   scene.add(gridHelper);
 
   // Add axis helper
   //const axesHelper = new AxesHelper(50);
   //scene.add(axesHelper);
 
-  // Edge-emphasizing lighting setup
-  // Main light from top-right
-  const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
-  mainLight.position.set(100, 100, 0);
-  mainLight.castShadow = false;
+  // Edge-emphasizing lighting setup with shadow configuration
+  // Main light from top-right with shadows - warm golden sunrise light
+  const mainLight = new THREE.DirectionalLight(0xFFD700, 0.9); // Golden color, slightly reduced intensity
+  mainLight.position.set(100, 40, 20);
+  mainLight.castShadow = true;
+  
+  // Configure shadow camera to encompass the model area
+  // Since model is centered at origin and roughly params.width in size,
+  // we'll set up the shadow camera to cover a bit more than that area
+  const shadowSize = defaultParams.width * 1.5; // Add some padding
+  mainLight.shadow.camera.left = -shadowSize / 2;
+  mainLight.shadow.camera.right = shadowSize / 2;
+  mainLight.shadow.camera.top = shadowSize / 2;
+  mainLight.shadow.camera.bottom = -shadowSize / 2;
+  mainLight.shadow.camera.near = 50;
+  mainLight.shadow.camera.far = 200;
+  
+  // Higher resolution shadow map for better quality
+  mainLight.shadow.mapSize.width = 2048;
+  mainLight.shadow.mapSize.height = 2048;
+  
+  // Reduce shadow acne with bias
+  mainLight.shadow.bias = -0.0001;
+  
   scene.add(mainLight);
 
-  // Edge light from top-left
-  const edgeLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  edgeLight.position.set(-50, 100, 75);
+  // Edge light from top-left - soft warm peach fill light (no shadows to avoid conflicts)
+  const edgeLight = new THREE.DirectionalLight(0xFFE0B2, 0.8); // Light warm peach
+  edgeLight.position.set(15, 100, 75);
   scene.add(edgeLight);
 
-  // Back light for depth
-  const backLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  // Back light for depth - subtle cream tone (no shadows)
+  const backLight = new THREE.DirectionalLight(0xFFF8DC, 0.6); // Cream color
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
-  // Ambient light for overall scene illumination
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  // Hemisphere light for sunrise effect - simulates natural outdoor lighting
+  const hemisphereLight = new HemisphereLight(
+    0xFFCC80, // Sky color - warm sunrise orange
+    0x443300, // Ground color - dark earthy brown
+    0.6       // Intensity
+  );
+  scene.add(hemisphereLight);
+
+  // Ambient light with warm sunrise tone
+  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.4);
   scene.add(ambientLight);
 
   // Create materials with edge emphasis
@@ -191,6 +267,14 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
     // Update material colors
     baseMaterial.color.set(params.baseColor);
     polylineMaterial.color.set(params.polylineColor);
+
+    // Update shadow camera size based on current model parameters
+    const shadowSize = params.width * 1.5;
+    mainLight.shadow.camera.left = -shadowSize / 2;
+    mainLight.shadow.camera.right = shadowSize / 2;
+    mainLight.shadow.camera.top = shadowSize / 2;
+    mainLight.shadow.camera.bottom = -shadowSize / 2;
+    mainLight.shadow.camera.updateProjectionMatrix();
 
     // Convert mesh data to Three.js meshes using the helper function
     baseMesh = meshDataToThreeMesh(baseMeshData, baseMaterial, params);
