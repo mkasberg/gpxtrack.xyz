@@ -51,11 +51,10 @@ function createGradientBackground(scene: THREE.Scene, renderer: WebGLRenderer) {
   const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
   
   // Royal blue to dusk blue gradient - focused on visible portion (0.5 to 1.0)
-  gradient.addColorStop(0,   '#c905ff');    // Top: Deep purple
-  gradient.addColorStop(0.2, '#7605ff');    // Upper-mid: purple
-  gradient.addColorStop(0.45, '#0566ed');   // Mid: blue
-  gradient.addColorStop(0.75, '#0a97fc');   // Lower-mid: Bright Sky-blue
-  gradient.addColorStop(1,    '#0041cc');   // Bottom: dark blue
+  gradient.addColorStop(0.5,  '#4169E1');   // Royal Blue (deeply saturated)
+  gradient.addColorStop(0.7,  '#2F4F8F');   // Steel Blue (rich medium tone)
+  gradient.addColorStop(0.85, '#191970');   // Midnight Blue (deep, dramatic)
+  gradient.addColorStop(1.0,  '#0F0F23');   // Very dark dusk blue (almost black with blue undertones)
   
   // Fill the canvas with the gradient
   context.fillStyle = gradient;
@@ -184,16 +183,16 @@ export function setupPreview(canvas: HTMLCanvasElement, onParamsChange?: (params
   backLight.position.set(0, 0, -100);
   scene.add(backLight);
 
-  // Hemisphere light for sunrise effect - simulates natural outdoor lighting
+  // Hemisphere light for sunrise effect - simulates natural outdoor lighting (BRIGHTENED)
   const hemisphereLight = new HemisphereLight(
     0xFFCC80, // Sky color - warm sunrise orange
     0x443300, // Ground color - dark earthy brown
-    0.5       // Intensity
+    0.7       // Intensity - increased from 0.5 to 0.7
   );
   scene.add(hemisphereLight);
 
-  // Ambient light with warm sunrise tone
-  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.2);
+  // Ambient light with warm sunrise tone (BRIGHTENED)
+  const ambientLight = new THREE.AmbientLight(0xFFCC80, 0.4); // Increased from 0.2 to 0.4
   scene.add(ambientLight);
 
   // Create materials with edge emphasis
