@@ -178,6 +178,45 @@ input[type="text"]::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
+/* Checkbox styles */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--color);
+  border-color: var(--color);
+}
+
+input[type="checkbox"]:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--color);
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(252, 82, 0, 0.2);
+}
+
 .value-display {
   flex: 0 0 40px;
   font-size: 16px;
