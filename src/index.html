@@ -193,6 +193,45 @@
       </form>
     </div>
 
+    <!-- Custom Bolt.new Badge Configuration (Pure CSS) -->
+    <style>
+      .bolt-badge-container {
+        position: fixed; top: 1rem; right: 1rem; z-index: 50;
+      }
+      
+      .bolt-badge-link {
+        display: block; transition: all 0.3s ease;
+      }
+      
+      .bolt-badge-link:hover {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+      
+      .bolt-badge-container img {
+        height: 2rem; width: auto; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); opacity: 0.9;
+
+    @media (min-width: 768px) {
+      .bolt-badge-container img {
+        height: 2.5rem;
+      }
+    }
+      }
+      
+      
+      .bolt-badge-container img:hover {
+        opacity: 1;
+      }
+    </style>
+    <div class="bolt-badge-container">
+      <a href="https://bolt.new/?rid=os72mi" target="_blank" rel="noopener noreferrer" 
+        class="bolt-badge-link">
+        <img src="https://storage.bolt.army/logotext_poweredby_360w.png" 
+            alt="Powered by Bolt.new badge" 
+            class=""
+              />
+      </a>
+    </div>
+
     <script type="module" src="./app.ts"></script>
   </body>
 </html>
