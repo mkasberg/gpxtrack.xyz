@@ -37,7 +37,7 @@ header {
 h1 {
   font-size: 40px;
   font-weight: 900;
-  background: linear-gradient(135deg, #0566ed, #0041cc);
+  background: linear-gradient(0deg, #0566ed, #0041cc);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
