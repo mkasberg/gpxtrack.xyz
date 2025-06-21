@@ -1,9 +1,11 @@
-![](./public/assets/website.png)
+![GPXTrack.xyz Preview](./public/assets/og.jpg)
 
 # GPX Track.xyz
 
-A website to turn gpx activity tracks into 3D prints.
+[gpxtrack.xyz](https://gpxtrack.xyz)
 
-Built with Manifold 3D and Three.js. Inspired by, and forked from <https://bracket.engineer>.
+A website to turn GPX activity tracks into 3D prints.
+
+Built with Manifold CAD and Three.js. Inspired by, and forked from [Bracket.Engineer](https://bracket.engineer).
 
 Run it with `npm run dev` build with `npm build`.
