@@ -233,11 +233,12 @@ input[type="text"]::placeholder {
 }
 
 input:checked + .toggle-slider {
-  background-color: #2196f3;
+  background-color: var(--color);
 }
 
 input:checked + .toggle-slider:before {
   transform: translateX(26px);
+  background-color: black;
 }
 
 button {
