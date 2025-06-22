@@ -190,10 +190,29 @@
         </div>
         <div class="control-group buttons">
           <input type="file" id="gpxFile" accept=".gpx" style="display: none;" />
+          <button type="button" id="helpButton">?</button>
           <button type="button" id="importGpxButton">Import GPX</button>
           <button type="button" id="export-button">Export 3MF</button>
         </div>
       </form>
+
+      <!-- Help Modal -->
+      <div id="modalOverlay" class="modal-overlay">
+        <div id="helpModal" class="modal-container">
+          <div class="modal-header">
+            <h2>Help & Instructions</h2>
+            <button id="closeModalButton" class="modal-close-button">×</button>
+          </div>
+          <div class="modal-content">
+            <h3>GPX Files</h3>
+            <p>Export a GPX file from <a href="https://www.strava.com">Strava</a> (or any other activity tracker) for your run, bike, hike, or other activity. Then import the GPX file to update the model with your own activity track.</p>
+            <h3>Printer Settings</h3>
+            <p>Your default printer settings should be fine. 10% infill is sufficient, and you shouldn't need any supports.</p>
+            <h3>Multi-color Printing</h3>
+            <p>The color pickers on the website are for preview only &mdash; they won't be saved in the exported 3MF file. If you have a multi-material printer, use your slicer to print the model in your desired colors. If you don't have a multi-material printer, you can probably still achieve a multi-color print with a <a href="https://help.prusa3d.com/article/color-change_1687">color change</a> (a pause that allows you to change the filament).</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Custom Bolt.new Badge Configuration (Pure CSS) -->

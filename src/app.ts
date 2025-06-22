@@ -204,3 +204,37 @@ exportButton.addEventListener("click", async  () => {
   a.download = `${currentGpxParams.title}.3mf`;
   a.click();
 });
+
+// Help modal functionality
+const helpButton = document.getElementById('helpButton') as HTMLButtonElement;
+const helpModal = document.getElementById('helpModal') as HTMLDivElement;
+const modalOverlay = document.getElementById('modalOverlay') as HTMLDivElement;
+const closeModalButton = document.getElementById('closeModalButton') as HTMLButtonElement;
+
+function showModal() {
+  modalOverlay.classList.add('is-visible');
+}
+
+function hideModal() {
+  modalOverlay.classList.remove('is-visible');
+}
+
+// Show modal when help button is clicked
+helpButton.addEventListener('click', showModal);
+
+// Hide modal when close button is clicked
+closeModalButton.addEventListener('click', hideModal);
+
+// Hide modal when clicking outside the modal content
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) {
+    hideModal();
+  }
+});
+
+// Hide modal when pressing Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modalOverlay.classList.contains('is-visible')) {
+    hideModal();
+  }
+});
