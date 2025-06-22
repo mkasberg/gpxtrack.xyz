@@ -123,38 +123,62 @@ export async function create3DText(
   
   const { Manifold, CrossSection } = await getManifoldInstance();
   const font = await loadFont();
-  const path = font.getPath(text, 0, 0, fontSize);
   
-  const contours = extractContours(path.commands);
+  // Process each character separately to handle spacing correctly
+  const characterManifolds: any[] = [];
+  let currentX = 0;
   
-  if (contours.length === 0) {
-    if (text.length > 0) {
-      console.warn('No valid contours found in text');
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    
+    // Skip spaces
+    if (char === ' ') {
+      const spaceWidth = fontSize * 0.3; // Approximate space width
+      currentX += spaceWidth;
+      continue;
     }
-    return null;
-  }
+    
+    const path = font.getPath(char, currentX, 0, fontSize);
+    const contours = extractContours(path.commands);
+    
+    if (contours.length === 0) {
+      console.warn(`No contours found for character: ${char}`);
+      continue;
+    }
 
-  const manifolds: any[] = [];
-  
-  for (let i = 0; i < contours.length; i++) {
-    const contour = contours[i];
-    if (contour.length >= 3) {
-      // Reverse the contour points to change winding order
-      const reversedContour = [...contour].reverse();
-      
-      const crossSection = new CrossSection(reversedContour);
+    // Reverse all contours to maintain the correct winding order
+    // that works for non-holed letters
+    const reversedContours = contours.map(contour => [...contour].reverse());
+    
+    console.log(`Processing character '${char}' with ${reversedContours.length} contours`);
+    
+    // Create a single CrossSection with all contours for this character
+    // This allows manifold-3d to correctly handle holes
+    try {
+      const crossSection = new CrossSection(reversedContours);
       const extruded = crossSection.extrude(thickness);
       
       if (!extruded.isEmpty()) {
-        manifolds.push(extruded);
+        characterManifolds.push(extruded);
+      } else {
+        console.warn(`Empty manifold created for character: ${char}`);
       }
+    } catch (error) {
+      console.error(`Error creating CrossSection for character '${char}':`, error);
+      console.log(`Contours for '${char}':`, reversedContours);
     }
+    
+    // Advance position for next character
+    const glyph = font.charToGlyph(char);
+    const advance = glyph.advanceWidth || fontSize * 0.6;
+    currentX += (advance / font.unitsPerEm) * fontSize;
   }
 
-  if (manifolds.length === 0) {
-    console.warn('No valid manifolds created');
+  if (characterManifolds.length === 0) {
+    console.warn('No valid manifolds created for any characters');
     return null;
   }
 
-  return Manifold.union(manifolds);
+  // Union all character manifolds together
+  return Manifold.union(characterManifolds);
 }
