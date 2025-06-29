@@ -270,7 +270,7 @@ export const defaultParams: GpxMiniatureParams = {
   width: 50,
   plateDepth: 10,
   thickness: 5,
-  textThickness: 1,
+  textThickness: 1.6,
   margin: 2.5,
   maxPolylineHeight: 20,
   baseColor: "#1a1a1a",
