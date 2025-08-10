@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPX Track to 3D Print</title>
+    <link rel="stylesheet" href="/tailwind.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    
     <!-- Open Graph Tags -->
     <meta
       property="og:title"
@@ -20,201 +26,74 @@
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://gpxtrack.xyz/assets/og.jpg" />
-    <link rel="stylesheet" href="./styles.css" />
     <link rel="icon" href="https://fav.farm/🚵" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700;900&display=swap "
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="app">
-      <header>
-        <h1>GPX Track.xyz</h1>
-        <div>
-          <p>Turn GPX activity tracks into 3D prints!</p>
-          <p>
-            On <a href="https://github.com/mkasberg/gpxtrack.xyz" target="_blank">GitHub</a>.
-            Made by <a href="https://www.mikekasberg.com">Mike Kasberg</a> with ❤️.
-            Inspired by <a href="https://bracket.engineer/" target="_blank">Bracket.Engineer</a>.
-          </p>
-        </div>
-      </header>
-      <div class="preview">
-        <canvas id="preview"></canvas>
-      </div>
-      <form class="controls" id="controls">
-        <div class="control-group">
-          <label for="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value=""
-          />
-        </div>
-        <div class="control-group">
-          <label for="fontSize">Font Size</label>
-          <input
-            type="range"
-            id="fontSize"
-            name="fontSize"
-            min="2"
-            max="12"
-            step="0.5"
-            value="5.5"
-          />
-          <input
-            type="number"
-            id="fontSizeValue"
-            class="value-display"
-            value="5.5"
-            step="0.5"
-            min="3"
-            max="10"
-          />
-        </div>
-        <div class="control-group">
-          <label for="mapRotation">Map Rotation</label>
-          <input
-            type="range"
-            id="mapRotation"
-            name="mapRotation"
-            min="-180"
-            max="180"
-            step="1"
-            value="0"
-          />
-          <input
-            type="number"
-            id="mapRotationValue"
-            class="value-display"
-            value="0"
-          />
-        </div>
-        <div class="control-group">
-          <label for="truncatePct">Truncate %</label>
-          <input
-            type="range"
-            id="truncatePct"
-            name="truncatePct"
-            min="0"
-            max="100"
-            step="1"
-            value="100"
-          />
-          <input
-            type="number"
-            id="truncatePctValue"
-            class="value-display"
-            value="100"
-          />
-        </div>
-        <div class="control-group">
-          <label for="width">Base Width</label>
-          <input
-            type="range"
-            id="width"
-            name="width"
-            min="50"
-            max="200"
-            step="1"
-            value="50"
-          />
-          <input
-            type="number"
-            id="widthValue"
-            class="value-display"
-            value="50"
-          />
-        </div>
-        <div class="control-group">
-          <label for="thickness">Base Thickness</label>
-          <input
-            type="range"
-            id="thickness"
-            name="thickness"
-            min="1"
-            max="10"
-            step="0.5"
-            value="5"
-          />
-          <input
-            type="number"
-            id="thicknessValue"
-            class="value-display"
-            value="5"
-          />
-        </div>
-        <div class="control-group">
-          <label for="maxPolylineHeight">Max Track Height</label>
-          <input
-            type="range"
-            id="maxPolylineHeight"
-            name="maxPolylineHeight"
-            min="1"
-            max="200"
-            step="1"
-            value="20"
-          />
-          <input
-            type="number"
-            id="maxPolylineHeightValue"
-            class="value-display"
-            value="20"
-          />
-        </div>
-        <div class="control-group">
-          <label for="slantedTextPlate">Slanted Text Plate</label>
-          <label class="toggle-switch">
-            <input
-              type="checkbox"
-              id="slantedTextPlate"
-              name="slantedTextPlate"
-              checked
-            />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="control-group colors">
-          <div>
-            <label for="baseColor">Base Color</label>
-            <input type="color" id="baseColor" name="baseColor" value="#000000" />
-          </div>
-          <div>
-            <label for="polylineColor">Polyline Color</label>
-            <input type="color" id="polylineColor" name="polylineColor" value="#fc5200" />
-          </div>
-        </div>
-        <div class="control-group buttons">
-          <input type="file" id="gpxFile" accept=".gpx" style="display: none;" />
-          <button type="button" id="helpButton">?</button>
-          <button type="button" id="importGpxButton">Import GPX</button>
-          <button type="button" id="export-button">Export 3MF</button>
-        </div>
-      </form>
+</head>
+<body class="antialiased font-['Barlow',_sans-serif] bg-[#1a1a1a] text-white">
 
-      <!-- Help Modal -->
-      <div id="modalOverlay" class="modal-overlay">
-        <div id="helpModal" class="modal-container">
-          <div class="modal-header">
-            <h2>Help & Instructions</h2>
-            <button id="closeModalButton" class="modal-close-button">×</button>
-          </div>
-          <div class="modal-content">
-            <h3>GPX Files</h3>
-            <p>Export a GPX file from <a href="https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#h_01GDP2JB35R4ECM0E6YAH316B9">Strava</a> (or any other activity tracker) for your run, bike, hike, or other activity. Then import the GPX file to update the model with your own activity track.</p>
-            <h3>Printer Settings</h3>
-            <p>Your default printer settings should be fine. 10% infill is sufficient, and you shouldn't need any supports.</p>
-            <h3>Multi-color Printing</h3>
-            <p>The color pickers on the website are for preview only &mdash; they won't be saved in the exported 3MF file. If you have a multi-material printer, use your slicer to print the model in your desired colors. If you don't have a multi-material printer, you can probably still achieve a multi-color print with a <a href="https://help.prusa3d.com/article/color-change_1687">color change</a> (a pause that allows you to change the filament).</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Hero Section -->
+    <section class="py-12 sm:py-16 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <!-- Image -->
+            <div class="relative max-w-6xl mx-auto">
+                <img src="/assets/trail_to_trophy.jpg" alt="A photogenic running trail and a 3D printed model of the trail" class="w-full rounded-lg shadow-2xl">
+                <a href="https://github.com/mkasberg/gpxtrack.xyz" target="_blank" rel="noopener noreferrer" title="View on GitHub" class="absolute top-4 left-4 bg-black/50 p-2 rounded-lg hover:bg-black/75 transition-colors">
+                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                    </svg>
+                </a>
+            </div>
 
-    <script type="module" src="./app.ts"></script>
-  </body>
+            <!-- Text Content -->
+            <div class="mt-12">
+                <h1 class="text-5xl md:text-7xl pb-2 font-black bg-gradient-to-t from-[#0566ed] to-[#0a97fc] bg-clip-text text-transparent">From Trail to Trophy.</h1>
+                <p class="mt-6 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+                    Turn your run, hike, or bike ride into a 3D figurine! GPXTrack.xyz turns GPX activity tracks into 3D prints. 100% free and open source on <a href="https://github.com/mkasberg/gpxtrack.xyz" class="underline">GitHub</a>.
+                </p>
+                <a href="/app.html" class="mt-10 inline-block text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg bg-gradient-to-t from-[#0566ed] to-[#0a97fc] hover:opacity-90 transition-opacity duration-300">
+                    Let's Go!
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 bg-black/20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-4xl pb-2 md:text-5xl font-black bg-gradient-to-t from-[#0566ed] to-[#0a97fc] bg-clip-text text-transparent">3D Prints in Three Simple Steps</h2>
+            </div>
+            <div class="mt-16 grid md:grid-cols-3 gap-12 text-center">
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center">
+                    <img src="/assets/biking.jpg" alt="Illustration of a GPX file being uploaded." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
+                    <h3 class="text-2xl font-bold">1. Upload Your Activity</h3>
+                    <p class="mt-2 text-gray-400">Drag and drop your GPX file from Strava, Garmin, or any tracking app.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center">
+                    <img src="/assets/editor.jpg" alt="Illustration of a 3D model being customized on a screen." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
+                    <h3 class="text-2xl font-bold">2. Customize Your Model</h3>
+                    <p class="mt-2 text-gray-400">Instantly preview your route in 3D. Customize the scale, add a base, and make it yours.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center">
+                    <img src="/assets/printed.jpg" alt="Illustration of a 3D printer creating a model from a file." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
+                    <h3 class="text-2xl font-bold">3. Download & Print</h3>
+                    <p class="mt-2 text-gray-400">Download the 3MF file. It's ready to print!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="bg-black/20 py-20 sm:py-24">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-4xl pb-2 md:text-5xl font-black bg-gradient-to-t from-[#0566ed] to-[#0a97fc] bg-clip-text text-transparent">Ready to Make Your Own?</h2>
+            <a href="/app.html" class="mt-8 inline-block text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg bg-gradient-to-t from-[#0566ed] to-[#0a97fc] hover:opacity-90 transition-opacity duration-300">
+                Import Your GPX and Start Creating
+            </a>
+        </div>
+    </section>
+
+</body>
 </html>
