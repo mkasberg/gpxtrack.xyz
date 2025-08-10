@@ -65,7 +65,7 @@
             <div class="mt-16 grid md:grid-cols-3 gap-12 text-center">
                 <!-- Step 1 -->
                 <div class="flex flex-col items-center">
-                    <img src="/assets/biking.jpg" alt="Illustration of a GPX file being uploaded." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
+                    <img src="/assets/biking.jpg" alt="A mountain biker on a trail." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
                     <h3 class="text-2xl font-bold">1. Upload Your Activity</h3>
                     <p class="mt-2 text-gray-400">Drag and drop your GPX file from Strava, Garmin, or any tracking app.</p>
                 </div>
@@ -77,10 +77,44 @@
                 </div>
                 <!-- Step 3 -->
                 <div class="flex flex-col items-center">
-                    <img src="/assets/printed.jpg" alt="Illustration of a 3D printer creating a model from a file." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
+                    <img src="/assets/printed.jpg" alt="A completed 3D GPX print." class="rounded-lg shadow-lg w-full max-w-xs mb-6">
                     <h3 class="text-2xl font-bold">3. Download & Print</h3>
                     <p class="mt-2 text-gray-400">Download the 3MF file. It's ready to print!</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl pb-2 md:text-5xl font-black bg-gradient-to-t from-[#0566ed] to-[#0a97fc] bg-clip-text text-transparent">Tools & Open Source Tech</h2>
+                <p class="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+                    GPXTrack.xyz works because of the open source tech it's built on. It runs entirely in your browser — no data ever leaves your computer. When you import a GPX file, we parse and extract the GPS data using JS. Then, we loop over those GPS points in our ManifoldCAD model to extrude the track.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                <a href="https://github.com/elalish/manifold" target="_blank" rel="noopener noreferrer" class="block bg-gray-800/50 p-6 rounded-lg transform hover:-translate-y-1 hover:shadow-xl transition-transform duration-300">
+                    <h3 class="text-xl font-bold text-white">ManifoldCAD</h3>
+                    <p class="mt-2 text-gray-400">A powerful, WASM-powered CAD kernel for creating lightning-fast and robust 3D models from your GPX data.</p>
+                </a>
+                <a href="https://threejs.org/" target="_blank" rel="noopener noreferrer" class="block bg-gray-800/50 p-6 rounded-lg transform hover:-translate-y-1 hover:shadow-xl transition-transform duration-300">
+                    <h3 class="text-xl font-bold text-white">Three.js</h3>
+                    <p class="mt-2 text-gray-400">The beautiful, interactive 3D preview is rendered in real-time using the legendary Three.js library.</p>
+                </a>
+                <a href="https://github.com/jscad/OpenJSCAD.org" target="_blank" rel="noopener noreferrer" class="block bg-gray-800/50 p-6 rounded-lg transform hover:-translate-y-1 hover:shadow-xl transition-transform duration-300">
+                    <h3 class="text-xl font-bold text-white">JSCAD</h3>
+                    <p class="mt-2 text-gray-400">We use @jscadui/3mf-export for generating high-quality, portable 3MF files for 3D printing.</p>
+                </a>
+                <a href="https://opentype.js.org/" target="_blank" rel="noopener noreferrer" class="block bg-gray-800/50 p-6 rounded-lg transform hover:-translate-y-1 hover:shadow-xl transition-transform duration-300">
+                    <h3 class="text-xl font-bold text-white">OpenType.js</h3>
+                    <p class="mt-2 text-gray-400">A JavaScript font parser used to extract the glyphs needed for extruding 3D text onto your model.</p>
+                </a>
+                <a href="https://vitejs.dev/" target="_blank" rel="noopener noreferrer" class="block bg-gray-800/50 p-6 rounded-lg transform hover:-translate-y-1 hover:shadow-xl transition-transform duration-300 lg:col-span-2">
+                    <h3 class="text-xl font-bold text-white">Vite</h3>
+                    <p class="mt-2 text-gray-400">The entire experience is bundled into a blazing-fast web interface using the next-generation frontend tool, Vite.</p>
+                </a>
             </div>
         </div>
     </section>
