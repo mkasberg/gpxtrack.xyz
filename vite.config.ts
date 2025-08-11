@@ -16,8 +16,8 @@ export default defineConfig({
     outDir: '../dist',
     rollupOptions: {
       input: {
-        main: resolve(process.cwd(), 'src', 'index.html'),
-        app: resolve(process.cwd(), 'src', 'app.html'),
+        main: resolve('src', 'index.html'),
+        app: resolve('src', 'app.html'),
       }
     }
   },
