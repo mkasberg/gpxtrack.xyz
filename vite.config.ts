@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'path'
 
 export default defineConfig({
   root: 'src',
@@ -13,6 +14,12 @@ export default defineConfig({
   build: {
     target: 'esnext',
     outDir: '../dist',
+    rollupOptions: {
+      input: {
+        main: resolve(process.cwd(), 'src', 'index.html'),
+        app: resolve(process.cwd(), 'src', 'app.html'),
+      }
+    }
   },
   plugins: [
     tailwindcss()
