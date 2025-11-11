@@ -150,8 +150,6 @@ export async function create3DText(
     // that works for non-holed letters
     const reversedContours = contours.map(contour => [...contour].reverse());
     
-    console.log(`Processing character '${char}' with ${reversedContours.length} contours`);
-    
     // Create a single CrossSection with all contours for this character
     // This allows manifold-3d to correctly handle holes
     try {
