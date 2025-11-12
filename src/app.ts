@@ -7,6 +7,25 @@ const MAX_GPX_POINTS = 200;
 // Global state for current parameters
 let currentGpxParams: GpxMiniatureParams = { ...defaultParams };
 
+async function loadInitialParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const modelName = urlParams.get('model');
+
+  if (modelName) {
+    try {
+      const response = await fetch(`/models/${modelName}.json`);
+      if (response.ok) {
+        const params = await response.json();
+        currentGpxParams = { ...defaultParams, ...params };
+      } else {
+        console.warn(`Model "${modelName}" not found, using default params.`);
+      }
+    } catch (error) {
+      console.error(`Error loading model "${modelName}":`, error);
+    }
+  }
+}
+
 // Initialize the preview
 const canvas = document.getElementById("preview") as HTMLCanvasElement;
 const updateMiniature = setupPreview(canvas);
@@ -96,6 +115,9 @@ function handleInput(e: Event) {
   
   displayValues(currentGpxParams);
   
+  // To Print Params for Debugging or Saving:
+  // console.log("Rendering Params: " + JSON.stringify(currentGpxParams));
+
   // Send parameters to worker instead of calling updateMiniature directly
   worker.postMessage(currentGpxParams);
 }
@@ -123,7 +145,9 @@ function restoreState() {
 }
 
 // Enable state restoration
-restoreState();
+loadInitialParams().then(() => {
+  restoreState();
+});
 
 // GPX file handling
 const gpxFileInput = document.getElementById('gpxFile') as HTMLInputElement;
