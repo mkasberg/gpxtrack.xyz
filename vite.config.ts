@@ -12,7 +12,25 @@ const models = readdirSync(modelsDir)
   .filter(f => f.endsWith('.json'))
   .map(f => f.replace('.json', ''));
 
-// Function to generate the model pages during the build/dev process
+/**
+ * SEO & STATIC PAGE GENERATION
+ * 
+ * WHY: This project is a client-side application (SPA). By default, search engines and
+ * social media crawlers only see a single "app.html" and cannot index specific models
+ * that are loaded via URL parameters (like ?model=nyc).
+ * 
+ * WHAT: This function generates a unique, physical .html file for every model JSON
+ * found in "public/models/". These pages are then used as separate entry points
+ * in the Vite build.
+ * 
+ * HOW:
+ * 1. It reads "app.html" as a base template.
+ * 2. For each model (e.g., "nyc.json"), it extracts the title and description.
+ * 3. It uses regex to inject unique <title>, <meta description>, and Open Graph tags.
+ * 4. It fixes relative asset paths (../../) because these pages live in a subdirectory.
+ * 5. It injects a "window.INITIAL_MODEL" script so the JS knows which model to load.
+ * 6. The generated files are saved to "src/models/" (ignored by git).
+ */
 function generateModelPages() {
   const templatePath = resolve(__dirname, 'src/app.html');
   const template = readFileSync(templatePath, 'utf-8');
@@ -23,10 +41,15 @@ function generateModelPages() {
   }
 
   models.forEach(model => {
+    // Load model JSON to get description
+    const modelJsonPath = resolve(modelsDir, `${model}.json`);
+    const modelData = JSON.parse(readFileSync(modelJsonPath, 'utf-8'));
+    const modelDescription = modelData.description || '';
+
     let capitalized = model.charAt(0).toUpperCase() + model.slice(1);
     if (model === 'nyc') capitalized = 'NYC';
     const title = `${capitalized} Marathon 3D Model | GPXTrack.xyz`;
-    const description = `3D printable STL model of the ${capitalized} Marathon route. Create custom figurines and art from your activity tracks.`;
+    const description = modelDescription || `3D printable STL model of the ${capitalized} Marathon route. Create custom figurines and art from your activity tracks.`;
     const imagePath = `/assets/${model}_model.png`;
     const ogImage = existsSync(resolve(__dirname, 'public', imagePath.slice(1))) 
       ? `https://gpxtrack.xyz${imagePath}` 
@@ -44,6 +67,10 @@ function generateModelPages() {
       // Fix relative paths because we are now in a subdirectory
       .replace('href="./styles.css"', 'href="../styles.css"')
       .replace('src="./app.ts"', 'src="../app.ts"')
+      // Inject description or remove placeholder if empty
+      .replace('<!-- description-placeholder -->', modelDescription ? `<p>${modelDescription}</p>` : '')
+      // Remove the hidden class from the description div container if description exists
+      .replace('id="model-description" class="hidden ', `id="model-description" class="${modelDescription ? '' : 'hidden '} `)
       .replace('</head>', `<script>window.INITIAL_MODEL = "${model}";</script></head>`);
     
     writeFileSync(resolve(targetDir, `${model}.html`), content);

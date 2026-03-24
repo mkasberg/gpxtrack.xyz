@@ -1,5 +1,6 @@
 {
   "title": "Chicago",
+  "description": "A 3D Printable model of the Chicago Marathon course.",
   "fontSize": 5.5,
   "truncatePct": 100,
   "mapRotation": 0,

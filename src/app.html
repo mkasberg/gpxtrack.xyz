@@ -35,13 +35,18 @@
     <div class="app">
       <header>
         <h1><a href="/">GPX Track.xyz</a></h1>
-        <div>
-          <p>Turn GPX activity tracks into 3D prints!</p>
-          <p>
-            On <a href="https://github.com/mkasberg/gpxtrack.xyz" target="_blank">GitHub</a>.
-            Made by <a href="https://www.mikekasberg.com">Mike Kasberg</a> with ❤️.
-            Inspired by <a href="https://bracket.engineer/" target="_blank">Bracket.Engineer</a>.
-          </p>
+        <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 flex-1 text-sm md:text-base">
+          <div>
+            <p>Turn GPX activity tracks into 3D prints!</p>
+            <p>
+              On <a href="https://github.com/mkasberg/gpxtrack.xyz" target="_blank">GitHub</a>.
+              Made by <a href="https://www.mikekasberg.com">Mike Kasberg</a> with ❤️.
+              Inspired by <a href="https://bracket.engineer/" target="_blank">Bracket.Engineer</a>.
+            </p>
+          </div>
+          <div id="model-description" class="hidden md:border-l md:border-white/20 md:pl-8 italic text-gray-400 max-w-md">
+            <!-- description-placeholder -->
+          </div>
         </div>
       </header>
       <div class="preview">

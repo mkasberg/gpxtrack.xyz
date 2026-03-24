@@ -1,5 +1,6 @@
 {
   "title": "NYC",
+  "description": "A 3D Printable model of the New York City Marathon course.",
   "fontSize": 5.5,
   "truncatePct": 100,
   "mapRotation": 0,
