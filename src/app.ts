@@ -9,7 +9,7 @@ let currentGpxParams: GpxMiniatureParams = { ...defaultParams };
 
 async function loadInitialParams() {
   const urlParams = new URLSearchParams(window.location.search);
-  const modelName = urlParams.get('model');
+  const modelName = urlParams.get('model') || (window as any).INITIAL_MODEL;
 
   if (modelName) {
     try {
