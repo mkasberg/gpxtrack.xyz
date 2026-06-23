@@ -23,7 +23,7 @@ body {
 
 header {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 1cqi;
   gap: 1cqi;
@@ -49,6 +49,28 @@ a {
 }
 
 h1 a {
+  text-decoration: none;
+}
+
+.bmac-button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.bmac-button {
+  display: inline-block;
+  background: #FFDD00;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.bmac-button:hover {
+  opacity: 0.8;
   text-decoration: none;
 }
 
