@@ -227,6 +227,7 @@ exportButton.addEventListener("click", async  () => {
   a.href = url;
   a.download = `${currentGpxParams.title}.3mf`;
   a.click();
+  setTimeout(showBmacModal, 2000);
 });
 
 // Help modal functionality
@@ -258,7 +259,32 @@ modalOverlay.addEventListener('click', (e) => {
 
 // Hide modal when pressing Escape key
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modalOverlay.classList.contains('is-visible')) {
-    hideModal();
+  if (e.key === 'Escape') {
+    if (modalOverlay.classList.contains('is-visible')) {
+      hideModal();
+    }
+    if (bmacModalOverlay.classList.contains('is-visible')) {
+      hideBmacModal();
+    }
+  }
+});
+
+// BMAC modal functionality
+const bmacModalOverlay = document.getElementById('bmacModalOverlay') as HTMLDivElement;
+const closeBmacModalButton = document.getElementById('closeBmacModalButton') as HTMLButtonElement;
+
+function showBmacModal() {
+  bmacModalOverlay.classList.add('is-visible');
+}
+
+function hideBmacModal() {
+  bmacModalOverlay.classList.remove('is-visible');
+}
+
+closeBmacModalButton.addEventListener('click', hideBmacModal);
+
+bmacModalOverlay.addEventListener('click', (e) => {
+  if (e.target === bmacModalOverlay) {
+    hideBmacModal();
   }
 });
